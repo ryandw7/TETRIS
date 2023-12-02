@@ -1,4 +1,4 @@
-import { line, block, rightS, leftS, rightJ, leftJ } from "./pieces.js";
+import { Piece, Block } from "./pieces.js";
 import { COLS, ROWS, BLOCK_SIZE } from "./constants.js";
 import { Board } from "./board.js"; 
 
@@ -14,11 +14,27 @@ ctx.canvas.height = ROWS * BLOCK_SIZE;
 
 // Scale blocks
 ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+ctx.fillStyle = 'blue';
 
-
-function play() {
+function play(ctx) {
   let board = new Board(ctx);
-    let a = 3;
+  document.addEventListener("load", board.correctChanges());
+  let block = new Block(ctx, board);
+  document.addEventListener("keydown", ()=>{
+   if(event.code === "ArrowRight"){
+    block.moveRight();
+   }
+  })
+  setTimeout(()=>{block.moveDown();
+  board.correctChanges();}, 1000)
+  setTimeout(()=>{block.moveDown();
+    board.correctChanges();}, 2000)
+    setTimeout(()=>{block.moveDown();
+      board.correctChanges();}, 3000)
+      setTimeout(()=>{block.moveDown();
+        board.correctChanges();}, 4000)
+  }
+    /* let a = 3;
     let b = 0;
     document.addEventListener("keydown", ()=>{
       if(event.code === 'ArrowRight'){
@@ -36,15 +52,16 @@ function play() {
       }, 100 * i)
         
   }
-}
+  */
+
 
   
   
 
 
-button.addEventListener("click", play)
+button.onclick = () => play(ctx);
 
-ctx.fillStyle = 'blue';
+
 function test(ctx, piece, positionX, positionY) {
   let xi = positionX;
   let yi = positionY;
