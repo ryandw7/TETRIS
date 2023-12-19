@@ -1,4 +1,4 @@
-import { Line, Block, RightJ, LeftJ, RightS, LeftS, Tpiece } from "./pieces.js";
+import { Line, Block, RightJ, LeftJ, RightS, LeftS, Tpiece, Piece } from "./pieces.js";
 import { COLS, ROWS, BLOCK_SIZE } from "./constants.js";
 import { Board } from "./board.js";
 
@@ -15,11 +15,9 @@ ctx.canvas.height = ROWS * BLOCK_SIZE;
 // Scale blocks
 ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 ctx.fillStyle = 'blue';
-async function play(ctx) {
+function play(ctx) {
   let board = new Board(ctx);
-  document.addEventListener("load", board.correctChanges());
-  board.newPiece()
- 
+   board.checkBoard();
 }
 
 

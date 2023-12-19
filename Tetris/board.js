@@ -4,45 +4,45 @@ import { Line, Block, RightJ, LeftJ, RightS, LeftS, Tpiece } from "./pieces.js";
 
 
 //board.js
-export class Board { 
+
+//General class to create grid for pieces to navigate through
+
+export class Board {
   constructor(ctx) {
     this.ctx = ctx;
     this.grid = this.getEmptyBoard();
-  }
-  
-  correctChanges(){
-    for(let y = 0; y < this.grid.length; y++){
-      for(let x = 0; x < this.grid[y].length; x++){
-      if(this.grid[y][x] > 0){
-      this.ctx.fillRect(x ,y , 1, 1);
-      this.ctx.beginPath();
-      this.ctx.moveTo(x, y -.1);
-      this.ctx.lineTo(x , y + .9);
-      this.ctx.lineTo(x + .9, y + .9);
-      this.ctx.lineTo(x + .9, y);
-      this.ctx.lineTo(x , y);
-      this.ctx.lineWidth = 0.2;
-      this.ctx.stroke();
-      }else{this.ctx.clearRect(x, y, 1, 1)}
-      
-      }
-    }
-    console.log(this.grid);
-  }
-  
-  checkForLoss(piece){
-   
-    if(piece.positionY + piece.matrix.length === this.grid.length){
-      this.newPiece()
-    }
-     
-    
+    this.pieceIsActive = false;
+    this.gameIsActive = true;
   }
 
-  async newPiece() {
+
+  //Updates the visuals to represent changes made to the grid, use after every piece move
+  correctChanges() {
+    for (let y = 0; y < this.grid.length; y++) {
+      for (let x = 0; x < this.grid[y].length; x++) {
+        if (this.grid[y][x] > 0) {
+          this.ctx.fillRect(x, y, 1, 1);
+          this.ctx.beginPath();
+          this.ctx.moveTo(x, y - .1);
+          this.ctx.lineTo(x, y + .9);
+          this.ctx.lineTo(x + .9, y + .9);
+          this.ctx.lineTo(x + .9, y);
+          this.ctx.lineTo(x, y);
+          this.ctx.lineWidth = 0.2;
+          this.ctx.stroke();
+        } else { this.ctx.clearRect(x, y, 1, 1) }
+      }
+    }
+  }
+
+
+
+  //generates a random new piece and initializes move function, then determines if a new piece should be dropped
+
+  newPiece() {
+    this.pieceIsActive = true;
     let piece = 'obj';
     let randomNum = Math.floor(Math.random() * 6);
-    console.log(randomNum);
     switch (randomNum) {
       case 0:
         piece = new Block(this.ctx, this);
@@ -66,28 +66,38 @@ export class Board {
         piece = new Tpiece(this.ctx, this);
         break;
     }
-    document.addEventListener("keydown", ()=> piece.keyListeners());
     this.ctx.fillStyle = piece.fillStyle;
-    piece.startPiece();
-    setTimeout(()=>{
-      for (let i = 0; i < this.grid.length - piece.matrix.length; i++) {
-        
-      setTimeout(() => { piece.moveDown(); 
-        this.checkForLoss(piece)}, 1000 * i)
-     
-    }}, 1000)
-}
+    piece.move();
 
+  }
+
+  checkBoard() {
+    for (let i = 1; i < 500; i++) {
+      setTimeout(() => {
+        if (this.pieceIsActive === false){
+          console.log('new piece')
+          this.newPiece();
+          this.pieceIsActive = true;
+        }
+      }, i * 1000)
+
+    }
+
+
+  }
+
+
+
+  //defines cleared board in between each move
   getEmptyBoard() {
     return Array.from(
-      {length: ROWS}, () => Array(COLS).fill(0)
+      { length: ROWS }, () => Array(COLS).fill(0)
     );
   }
+
+
+
 }
 
 
 
-
-
-
-  
