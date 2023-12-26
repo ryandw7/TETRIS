@@ -1,16 +1,14 @@
 //exports to board
 export { Piece, Line, Block, LeftJ, RightJ, LeftS, RightS, Tpiece };
-
-
 class Piece {
     constructor(ctx, parent) {
         this.ctx = ctx;
         this.parent = parent;
         this.positionY = 0;
         this.positionX = 4;
-        this.canMoveDown = false;
-        this.canMoveRight = false;
-        this.canMoveLeft = false;
+        this.canMoveDown = true;
+        this.canMoveRight = true;
+        this.canMoveLeft = true;
         this.pieceSpeed = 1;
         this.isActive = true;
     }
@@ -38,6 +36,31 @@ class Piece {
         }
     }
 
+    rotateMatrix() {
+        let tally = 0;
+        let newArray = [];
+        let newMatrix = [];
+        for (let row = 0; row < this.matrix.length; row++) {
+            for (let col = 0; col < this.matrix.length; col++) {
+                newArray.push(this.matrix[col][row]);
+            }
+        }
+        for (let row = 0; row < Math.sqrt(newArray.length); row++) {
+
+            newMatrix.push([]);
+            for (let col = 0; col < Math.sqrt(newArray.length); col++) {
+                newMatrix[row].push(newArray[tally]);
+                tally++
+                console.log(tally)
+            }
+        }
+        for (let i = 0; i < newMatrix.length; i++) {
+            newMatrix[i] = newMatrix[i].reverse();
+        }
+        this.clearMatrix();
+        this.matrix = newMatrix;
+        this.fillMatrix()
+    }
 
     left() {
         this.clearMatrix();
@@ -60,9 +83,15 @@ class Piece {
         this.parent.correctChanges();
     }
 
+    rotate() {
+
+    }
+
     keyListeners() {
+        if(this.isActive){
         this.clearMatrix();
         this.determineBoundaries();
+        
         if (this.canMoveRight && event.code === "ArrowRight" && this.isActive) {
             this.right();
         } else {
@@ -72,10 +101,9 @@ class Piece {
         } else {
         }
         if (this.canMoveDown && event.code === "ArrowDown" && this.isActive) {
-            this.pieceSpeed = 3;
+            this.rotateMatrix()
         };
-        this.canMoveRight = false;
-        this.canMoveLeft = false;
+    }
     }
 
 
@@ -89,12 +117,16 @@ class Piece {
         for (let y = 0; y < this.matrix.length; y++) {
             for (let x = 0; x < this.matrix[y].length; x++) {
                 if (this.matrix[y][x] > 0) {
-                    console.log(this.positionY + y + 1)
-                    if (this.positionY + y + 1 < this.parent.grid.length) {
-                        canMoveDownTally.push(true);
-                    } else if (this.positionY + y + 1 !== 0){
-                        canMoveDownTally.push(false);
-                    }else{
+
+                    if (this.positionY + 1 + y < this.parent.grid.length) {
+                        if (this.parent.grid[this.positionY + y + 1][this.positionX + x] === 0) {
+
+                            canMoveDownTally.push(true);
+                        } else {
+                            canMoveDownTally.push(false)
+
+                        }
+                    } else {
                         canMoveDownTally.push(false);
                     }
                     if (this.parent.grid[this.positionY + y][1 + this.positionX + x] === 0 && this.positionX + x < this.parent.grid[y].length) {
@@ -119,30 +151,34 @@ class Piece {
         this.canMoveRight = canMoveRightTally.every(Boolean);
         this.canMoveLeft = canMoveLeftTally.every(Boolean);
         this.fillMatrix();
-        if (this.canMoveDown === false) {
-            this.isActive = false;
-        }
-       
     }
 
     move() {
-        document.addEventListener("keydown", () => { this.keyListeners() });
+        document.addEventListener("keydown", () => this.keyListeners());
         for (let i = 0; i < 20; i++) {
+            if (!this.parent.pieceIsActive) { break; }
             setTimeout(() => {
-                console.log(this.parent.grid);
-                console.log(this.canMoveDown)
-                if (this.isActive === true){
+                if (this.isActive === true && this.parent.pieceIsActive) {
                     this.determineBoundaries();
-                    if(this.canMoveDown){
+                    if (this.canMoveDown) {
                         this.down();
-                    } else {
-                        delete this.keyListeners;
-                        this.isActive = false;
-                        this.parent.pieceIsActive = false;
-                    }
+                    } else if (!this.canMoveDown) {
+                        setTimeout(() => {
+                            this.determineBoundaries();
+                            if (!this.canMoveDown) {
+                                console.log('piece is not active')
+                                this.isActive = false;
+                                this.parent.pieceIsActive = false;
+                                delete this.parent;
+                            }
+                        }, 500);
+                    } else { this.down() }
+                } else {
+                    console.log('bruh');
+                    this.parent.pieceIsActive = false;
+                    delete this.parent;
                 }
-            }, (1000 * i));
-
+            }, (500 * i) / (this.pieceSpeed));
         }
     }
 }
@@ -187,7 +223,6 @@ class LeftJ extends Piece {
             [0, 3, 0],
             [3, 3, 0]
         ]
-
     }
 }
 
@@ -223,7 +258,7 @@ class RightS extends Piece {
     constructor(ctx, parent) {
         super(ctx, parent);
         this.positionX = 4;
-        this.fillStyle = 'greena';
+        this.fillStyle = 'green';
         this.matrix = [
             [6, 6, 0],
             [0, 6, 6],
@@ -240,7 +275,8 @@ class Tpiece extends Piece {
         this.fillStyle = 'purple';
         this.matrix = [
             [0, 7, 0],
-            [7, 7, 7]
+            [7, 7, 7],
+            [0, 0, 0]
         ]
 
     }
