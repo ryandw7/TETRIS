@@ -15,9 +15,9 @@ ctx.canvas.height = ROWS * BLOCK_SIZE;
 // Scale blocks
 ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 ctx.fillStyle = 'blue';
-function play(ctx) {
+async function play(ctx) {
   let board = new Board(ctx);
-   board.checkBoard();
+  board.checkBoard();
 }
 
 

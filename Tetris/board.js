@@ -14,6 +14,12 @@ export class Board {
     this.pieceIsActive = false;
     this.currentPiece = 'obj';
     this.gameIsActive = true;
+    this._score = 0;
+    this._scoreMultiplier = 1;
+    this._level = 1;
+    this._linesCleared = 0;
+    this._levelTally = 0;
+    this.speedMultiplier = 1;
   }
 
 
@@ -86,18 +92,21 @@ export class Board {
         break;
     }
     this.currentPiece = piece;
-    piece.move();
-
   }
 
-  checkBoard() {
+  async checkBoard() {
     for (let i = 1; i < 500; i++) {
       setTimeout(() => {
+        document.getElementById("score").textContent = this._score;
+        document.getElementById("level").textContent = this._level;
+        document.getElementById("lines").textContent = this._linesCleared;
         if (this.pieceIsActive === false){
+          this._score += 10;
           console.log('new piece');
-          //this.clearLines();
+          this.clearLines();
           this.newPiece();
           this.pieceIsActive = true;
+          this.currentPiece.move();
         }
       }, i * 1000)
     }
@@ -107,9 +116,19 @@ export class Board {
     console.log('checking rows')
     for(let row = 0; row < this.grid.length; row++){
       if(this.grid[row].every(Boolean)){
-        this.grid.splice(this.grid[row], 1);
-        this.grid.unshift([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 1);
+        this._linesCleared++;
+        this._levelTally++;
+        this._score += (1000 * this._scoreMultiplier);
+        //this.grid[row] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.grid.splice(row, 1);
+        this.grid.unshift([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         console.log(this.grid);
+        if(this._levelTally >= 4){
+          this._level++;
+          this._scoreMultiplier += .2;
+          this.speedMultiplier += .5;
+          this._levelTally -= 4;
+        }
         this.correctChanges();
       }
     }

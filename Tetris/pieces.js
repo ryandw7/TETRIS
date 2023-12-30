@@ -51,7 +51,6 @@ class Piece {
             for (let col = 0; col < Math.sqrt(newArray.length); col++) {
                 newMatrix[row].push(newArray[tally]);
                 tally++
-                console.log(tally)
             }
         }
         for (let i = 0; i < newMatrix.length; i++) {
@@ -100,8 +99,11 @@ class Piece {
             this.left();
         } else {
         }
+        if (this.canMoveDown && event.code === "ArrowUp" && this.isActive) {
+            this.rotateMatrix();
+        };
         if (this.canMoveDown && event.code === "ArrowDown" && this.isActive) {
-            this.rotateMatrix()
+            this.pieceSpeed = 5;
         };
     }
     }
@@ -153,10 +155,15 @@ class Piece {
         this.fillMatrix();
     }
 
-    move() {
+    async move() {
         document.addEventListener("keydown", () => this.keyListeners());
+        document.addEventListener("keyup",()=>{
+            console.log("key up")
+    
+            this.pieceSpeed = 1;
+      })
         for (let i = 0; i < 20; i++) {
-            if (!this.parent.pieceIsActive) { break; }
+            await new Promise((resolve) => {
             setTimeout(() => {
                 if (this.isActive === true && this.parent.pieceIsActive) {
                     this.determineBoundaries();
@@ -174,16 +181,16 @@ class Piece {
                         }, 500);
                     } else { this.down() }
                 } else {
-                    console.log('bruh');
                     this.parent.pieceIsActive = false;
                     delete this.parent;
                 }
-            }, (500 * i) / (this.pieceSpeed));
+                resolve(true)}, (500) / ((this.pieceSpeed) * (this.parent.speedMultiplier)));
         }
+            )
     }
 }
 
-
+}
 
 class Block extends Piece {
     constructor(ctx, parent) {
