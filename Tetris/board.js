@@ -100,6 +100,7 @@ export class Board {
         document.getElementById("score").textContent = this._score;
         document.getElementById("level").textContent = this._level;
         document.getElementById("lines").textContent = this._linesCleared;
+        console.log(i)
         if (this.pieceIsActive === false){
           this._score += 10;
           console.log('new piece');

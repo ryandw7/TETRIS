@@ -88,24 +88,24 @@ class Piece {
 
     keyListeners() {
         if(this.isActive){
-        this.clearMatrix();
-        this.determineBoundaries();
-        
-        if (this.canMoveRight && event.code === "ArrowRight" && this.isActive) {
-            this.right();
-        } else {
-        };
-        if (this.canMoveLeft && event.code === "ArrowLeft" && this.isActive) {
-            this.left();
-        } else {
+            this.clearMatrix();
+            this.determineBoundaries();
+
+            if (this.canMoveRight && event.code === "ArrowRight" && this.isActive) {
+                this.right();
+            } else {
+            };
+            if (this.canMoveLeft && event.code === "ArrowLeft" && this.isActive) {
+                this.left();
+            } else {
+            }
+            if (this.canMoveDown && event.code === "ArrowUp" && this.isActive) {
+                this.rotateMatrix();
+            };
+            if (this.canMoveDown && event.code === "ArrowDown" && this.isActive) {
+                this.pieceSpeed = 5;
+            };
         }
-        if (this.canMoveDown && event.code === "ArrowUp" && this.isActive) {
-            this.rotateMatrix();
-        };
-        if (this.canMoveDown && event.code === "ArrowDown" && this.isActive) {
-            this.pieceSpeed = 5;
-        };
-    }
     }
 
 
@@ -157,38 +157,41 @@ class Piece {
 
     async move() {
         document.addEventListener("keydown", () => this.keyListeners());
-        document.addEventListener("keyup",()=>{
+        document.addEventListener("keyup", () => {
             console.log("key up")
-    
+
             this.pieceSpeed = 1;
-      })
+        })
         for (let i = 0; i < 20; i++) {
             await new Promise((resolve) => {
-            setTimeout(() => {
-                if (this.isActive === true && this.parent.pieceIsActive) {
-                    this.determineBoundaries();
-                    if (this.canMoveDown) {
-                        this.down();
-                    } else if (!this.canMoveDown) {
-                        setTimeout(() => {
-                            this.determineBoundaries();
-                            if (!this.canMoveDown) {
-                                console.log('piece is not active')
-                                this.isActive = false;
-                                this.parent.pieceIsActive = false;
-                                delete this.parent;
-                            }
-                        }, 500);
-                    } else { this.down() }
-                } else {
-                    this.parent.pieceIsActive = false;
-                    delete this.parent;
-                }
-                resolve(true)}, (500) / ((this.pieceSpeed) * (this.parent.speedMultiplier)));
-        }
+                setTimeout(() => {
+                    if (this.isActive === true && this.parent.pieceIsActive) {
+                        this.determineBoundaries();
+                        if (this.canMoveDown) {
+                            this.down();
+                        } else if (!this.canMoveDown) {
+                            setTimeout(() => {
+                                this.determineBoundaries();
+                                if (!this.canMoveDown) {
+                                    console.log('piece is not active')
+                                    this.isActive = false;
+                                    this.parent.pieceIsActive = false;
+                                    delete this.parent;
+                                    resolve(false)
+                                }
+                            }, 500);
+                        } else { this.down() }
+                    } else {
+                        this.parent.pieceIsActive = false;
+                        delete this.parent;
+                        resolve(false)
+                    }
+                    resolve(true)
+                }, (500) / ((this.pieceSpeed) * (this.parent.speedMultiplier)));
+            }
             )
+        }
     }
-}
 
 }
 
