@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tetris</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet" />
+  <script src='https://kit.fontawesome.com/f6ad323097.js' crossorigin='anonymous'></script>
+  <script src="rotateMatrix.js" defer></script>
+</head>
+
+<body>
+  <div class="grid">
+    <div id="game-over">Game Over</div>
+    <canvas id="canvas" class="game-board">
+    </canvas>
+    <div>
+      <div class="stats">
+        <h1>TETRIS</h1>
+        <p>Score: <span id="score">0</span></p>
+        <p>Lines: <span id="lines">0</span></p>
+        <p>Level: <span id="level">0</span></p>
+      </div>
+    </div>
+    <div class="button-box">
+      <button id="left"><i class='far fa-caret-square-left'></i></button>
+      <button id="right"><i class='far fa-caret-square-right'></i></button>
+      <button id="down">B</button>
+      <button id="up">A</button>
+    </div>
+
+  </div>
+  <section id="menu">
+    <h1>TETRIS</h1>
+    <h2>How To Play</h2>
+    <p><i class='far fa-caret-square-up' font-size="5px"></i>, A : Rotate Piece</p>
+    <p><i class='far fa-caret-square-down' font-size="5px"></i>, B : Speed Up</p>
+    <p><i class='far fa-caret-square-left' font-size="5px"></i>, <i class='far fa-caret-square-right'></i> : Move left or
+      right</p>
+    <button id="play-button">Play</button>
+  </section>
+  <script type="module" src="constants.js"></script>
+  <script type="module" src="board.js"></script>
+  <script type="module" src="piece.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
